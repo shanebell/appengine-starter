@@ -1,0 +1,51 @@
+{
+  "name": "appengine-starter",
+  "description": "AppEngine starter for Node, Express and React",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "start:dev": "nodemon",
+    "start": "node dist/index.js",
+    "install:server": "npm i",
+    "install:client": "cd client && npm i",
+    "install:all": "concurrently \"npm run install:server\" \"npm run install:client\"",
+    "build:server": "tsc",
+    "build:client": "cd client && npm run build",
+    "start:client": "cd client && npm run start",
+    "build": "concurrently \"npm run build:server\" \"npm run build:client\"",
+    "deploy": "npm run build && gcloud app deploy",
+    "browse": "gcloud app browse"
+  },
+  "dependencies": {
+    "@google-cloud/logging-bunyan": "3.1.1",
+    "body-parser": "1.19.0",
+    "bunyan": "1.8.15",
+    "express": "4.17.1",
+    "http-proxy-middleware": "2.0.1"
+  },
+  "devDependencies": {
+    "@types/bunyan": "1.8.7",
+    "@types/express": "4.17.13",
+    "@types/http-proxy-middleware": "1.0.0",
+    "concurrently": "6.3.0",
+    "nodemon": "2.0.15",
+    "prettier": "2.4.1",
+    "typescript": "4.4.4"
+  },
+  "nodemonConfig": {
+    "watch": [
+      ".",
+      "package.json"
+    ],
+    "ignore": [
+      "dist",
+      "package-lock.json",
+      "src/**/*.test.*"
+    ],
+    "ext": "ts",
+    "exec": "npm run build:server && npm start"
+  },
+  "prettier": {
+    "printWidth": 120
+  }
+}

@@ -1,0 +1,30 @@
+runtime: nodejs14
+env: standard
+handlers:
+  - url: /api/.*
+    secure: always
+    script: auto
+
+  - url: /static/js/(.*)
+    static_files: client/build/static/js/\1
+    upload: client/build/static/js/(.*)
+
+  - url: /static/css/(.*)
+    static_files: client/build/static/css/\1
+    upload: client/build/static/css/(.*)
+
+  - url: /static/media/(.*)
+    static_files: client/build/static/media/\1
+    upload: client/build/static/media/(.*)
+
+  - url: /(.*\.(json|ico|png|txt))$
+    static_files: client/build/\1
+    upload: client/build/.*\.(json|ico|png|txt)$
+
+  - url: /
+    static_files: client/build/index.html
+    upload: client/build/index.html
+
+  - url: /.*
+    static_files: client/build/index.html
+    upload: client/build/index.html
