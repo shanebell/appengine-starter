@@ -8,9 +8,12 @@ This project is a starter template for writing web applications on Google AppEng
 
 ## Running locally
 
-Ensure you have Node.js `lts/fermium` (v14) installed. 
+Open the Google Cloud Console and download a credentials key for the default AppEngine service account. Save this file locally
+as `credentials.json`. Note: this is only required locally as credentials are handled automatically when deployed to AppEngine.
 
-From the root directory:
+Ensure you have Node.js `lts/fermium` (v14) installed.
+
+From the root of this project:
 
 ```bash
 npm i
@@ -19,10 +22,8 @@ npm run start:client
 npm run start:server
 ```
 
-When running locally the server runs on port 8080 and the client runs on port 3000. In local mode the server is configured to proxy requests to the client.
-If you access the application via http://localhost:8080 it will automatically proxy requests to the React client. 
-
-Note: do not access the client directly because it will not handle backend requests correctly.
+When running locally the server runs on port 8080 and the client runs on port 3000. In local mode the client is configured to proxy unknown requests to the server. This allows local development of
+backend API endpoints while maintaining hot-reloading etc in the client. Access the application via http://localhost:3000 it will automatically proxy API calls to the server.
 
 Both the `start:client` and `start:server` scripts watch for changes and automatically recompile, restart etc.
 
@@ -30,14 +31,14 @@ Both the `start:client` and `start:server` scripts watch for changes and automat
 
 Ensure you have the [gcloud](https://cloud.google.com/sdk/gcloud) command line tool installed.
 
-Authenticate with `gcloud` and set the appropriate project.
+Configure `gcloud`:
 
 ```bash
 gcloud auth login
 gcloud config set project my-project-id
 ```
 
-Run the deployment.
+Deploy the application to AppEngine:
 
 ```bash
 npm run deploy

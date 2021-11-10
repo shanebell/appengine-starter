@@ -1,12 +1,13 @@
 import express, { NextFunction, Request, Response } from "express";
 import bodyParser from "body-parser";
-import { createProxyMiddleware, fixRequestBody } from "http-proxy-middleware";
-import { ClientRequest, IncomingMessage } from "http";
 import logger from "./logger";
+import * as firestore from "./firestore";
+import * as gcs from "./gcs";
 
 const app = express();
 
 app.use(bodyParser.raw({ type: "application/octet-stream" }));
+app.use(bodyParser.json());
 
 const handleAsync =
   (handlerFn: (req: Request, res: Response, next?: NextFunction) => Promise<any>) =>
@@ -16,49 +17,42 @@ const handleAsync =
       .catch((error: any) => next(error));
 
 app.get(
-  "/_ah/warmup",
-  handleAsync(async (req: Request, res: Response) => {
-    logger.info("Initalising application");
-    // perform initialisation tasks here
-    res.send("ok");
-  })
-);
-
-app.get(
   "/api/list",
   handleAsync(async (req: Request, res: Response) => {
+    logger.info("Sending JSON response");
     res.json([
       { id: 1, value: "ABC" },
       { id: 2, value: "DEF" },
       { id: 3, value: "GHI" },
-      { id: 4, value: "JKL" },
-      { id: 5, value: "MNO" },
     ]);
   })
 );
 
+// read a file from GCS and return the file contents as the payload
 app.get(
-  "/api/hello",
+  "/api/gcs/:bucket/:file",
   handleAsync(async (req: Request, res: Response) => {
-    res.send("hello");
+    const { bucket, file } = req.params;
+    const data = await gcs.download(bucket, file);
+    res.send(data);
   })
 );
 
-// When running locally proxy requests to the React frontend
-if (process.env.NODE_ENV !== "production") {
-  app.use(
-    "*",
-    createProxyMiddleware({
-      target: "http://localhost:3000",
-      onProxyReq: (proxyReq: ClientRequest, req: IncomingMessage) => {
-        fixRequestBody(proxyReq, req);
-      },
-      proxyTimeout: 30000,
-      secure: false,
-      changeOrigin: true,
-    })
-  );
-}
+// save incoming request data to Firestore
+app.post(
+  "/api/request",
+  handleAsync(async (req: Request, res: Response) => {
+    const { path, headers, query, body } = req;
+    const data = {
+      path,
+      headers,
+      query,
+      body,
+    };
+    const doc = await firestore.saveDocument("requests", data);
+    res.send(doc);
+  })
+);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

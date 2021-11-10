@@ -2,6 +2,8 @@ node_modules
 client/build
 dist
 
+credentials.json
+
 .idea
 
 .DS_Store
