@@ -6,12 +6,14 @@ This project is a starter template for writing web applications on Google AppEng
 - [React](https://reactjs.org/) client with Material-UI (using [create-react-app](https://create-react-app.dev/))
 - [Typescript](https://www.typescriptlang.org/)
 
+This project includes some basic functionality to interact with Google Cloud Storage and Datastore.
+
 ## Running locally
 
 Open the Google Cloud Console and download a credentials key for the default AppEngine service account in your GCP project. Save this file locally as `credentials.json`. Note: this is only required
 locally as credentials are handled automatically when deployed to AppEngine.
 
-Ensure you have Node.js `lts/fermium` (v14) installed.
+Ensure you have Node.js `lts/gallium` (v16) installed.
 
 From the root of this project:
 

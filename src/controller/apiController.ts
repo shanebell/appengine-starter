@@ -1,8 +1,8 @@
-import { handleAsync } from "./middleware";
+import { handleAsync } from "../middleware/handleAsync";
 import { Request, Response, Router } from "express";
-import logger from "./logger";
-import * as firestore from "./firestore";
-import * as gcs from "./gcs";
+import logger from "../logger";
+import { saveEntity } from "../datastore";
+import * as gcs from "../gcs";
 
 const apiController = Router();
 
@@ -18,7 +18,7 @@ apiController.get(
   })
 );
 
-// save incoming request data to Firestore
+// save incoming request data to Datastore
 apiController.post(
   "/request",
   handleAsync(async (req: Request, res: Response) => {
@@ -29,7 +29,7 @@ apiController.post(
       query,
       body,
     };
-    const doc = await firestore.saveDocument("requests", data);
+    const doc = await saveEntity("requests", data);
     res.send(doc);
   })
 );
@@ -40,6 +40,7 @@ apiController.get(
   handleAsync(async (req: Request, res: Response) => {
     const { bucket, file } = req.params;
     const data = await gcs.download(bucket, file);
+    console.log("data: %o", data);
     res.send(data);
   })
 );
